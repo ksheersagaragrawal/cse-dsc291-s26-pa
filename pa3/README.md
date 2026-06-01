@@ -200,8 +200,8 @@ only recognizes config filenames containing `llama` or `deepseek`.
 ### 2.3 MoE Cost Analysis — DeepSeek-V3 (Bonus, 25 pts)
 
 `part2/deepseek_v3_config.json` contains DeepSeek-V3's config. Implement
-`model_training_cost_analysis_deepseek` and report total vs. activated
-parameters per token. Mind:
+`model_training_cost_analysis_deepseek` and report the total parameter
+count. Mind:
 
 - **MLA** attention (`q_lora_rank`, `kv_lora_rank`, `qk_nope_head_dim`,
   `qk_rope_head_dim`, `v_head_dim`).
@@ -231,6 +231,12 @@ Default model pair (public weights, fits any GPU with >=4 GB VRAM):
 - target: `EleutherAI/pythia-1.4b-deduped`
 - draft:  `EleutherAI/pythia-160m-deduped`
 
+The default pair was chosen specifically because the two Pythia models share
+a tokenizer and were trained on the same corpus, which gives unusually high
+greedy agreement (the basis of the ≥ 75% acceptance threshold). Other pairs
+may have substantially lower agreement and may not clear the Part 3.2
+thresholds even with a correct implementation.
+
 If you swap to a different target/draft pair, document your measured
 acceptance rate and the resulting speedup in your report.
 
@@ -244,6 +250,9 @@ Fill in the notebook stubs:
 - `speculative_decode` main loop (10 pts)
 
 ### 3.2 Performance (20 pts)
+
+Scored independently across your §3.3 sweep — each bar counts as cleared
+if **any** swept `num_speculative_tokens` value meets it:
 
 - ≥ 1.0× wall-clock speedup over baseline target-only decoding (10 pts)
 - ≥ 75% draft-token acceptance rate (10 pts)
@@ -265,7 +274,10 @@ The single-branch verifier accepts at most one chain per round. Implement
 verify multiple candidate branches in one forward pass, **or** (b) n-gram
 lookup decoding combined with the standard draft model. Report acceptance
 rate, speedup, and a one-paragraph discussion of why your variant changes the
-acceptance rate. Replicating EAGLE-2 or Medusa qualifies.
+acceptance rate. Replicating EAGLE-2 or Medusa qualifies. Note that naive tree
+speculation (without trained tree-generation heads) typically underperforms
+the single-chain baseline; n-gram lookup is usually the more tractable path
+to a measurable speedup.
 
 ---
 
