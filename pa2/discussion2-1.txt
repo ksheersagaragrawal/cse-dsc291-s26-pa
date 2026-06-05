@@ -1,1 +1,1 @@
-Put discussion here for 2.1
+The custom all-reduce uses a simple reduce-to-root followed by a broadcast, so it is correct but usually slower than MPI.Allreduce because the root becomes a communication bottleneck and MPI can use tree/ring algorithms internally. The custom all-to-all uses pairwise Sendrecv exchanges, which avoids deadlock and is simple, but MPI.Alltoall can use optimized schedules and lower-level transport tuning. Therefore, a performance gap is expected even when the custom implementations transfer the right data.

@@ -1,0 +1,23 @@
+PA1 Bonus — Autoregressive decoding (no KV cache)
+
+Symbols: T = number of new tokens to generate; t = current sequence length (context) before/within a step; d = model (hidden) dimension; L = number of decoder blocks; n = sequence length in the forward at a given step (grows with decoding).
+
+1) Time per decoding step
+Each step runs a full forward on the current context. Self-attention dominates: building attention scores and weights scales like O(n^2 d) per block, so one step is O(L n^2 d) overall (treating L and d as part of the model size). In terms of t only, that is O(t^2) per full forward when L and d are held fixed.
+
+2) Total time to generate T new tokens
+The context length grows: roughly n_0, n_0+1, ... , n_0+T-1 for T steps (n_0 = prompt length in tokens). The work per step is O(i^2) in the length i at that step, so the sum is
+  sum_{k=0}^{T-1} (n_0 + k)^2 = O(T^3 + n_0^2 T) = O(T^3)
+when n_0 is small compared to T (constant prompt length, large T). So total decode time is cubic in T in the length-dominated (attention) regime.
+
+3) Space during generation
+We store activations and (for attention) intermediate tensors of size at least O(n) along the sequence, and attention-related material up to O(n^2) per layer for score matrices, so a safe upper bound is O(L n^2 + L n d) for a length-n forward, often summarized as O(n^2) in n for attention and O(n d) for hidden state storage, depending on what is counted.
+
+4) Reducing repeat work: KV cache
+Idea: cache the key and value vectors for all past token positions. On each new token, only the new key/value row is computed; past keys and values are reused. That avoids re-running the full n x n attention over all old positions from scratch.
+
+Effect on time: a single new-token step can drop from O(n^2) in n to O(n) in n for attention (linear attention over past keys), so total for T new tokens is often O(T^2) in n ~ T, instead of O(T^3) without a cache.
+
+Effect on space: extra memory O(L n d) (or O(L t d) with t positions) to hold cached K, V, traded for less repeated compute.
+
+Without KV cache, each step recomputes attention over the entire past; with a KV cache, past K and V are stored and only updated incrementally, which removes that repeated O(n^2) work on old positions.

@@ -1,0 +1,8 @@
+#!/bin/sh
+'''exec' "/Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python" "$0" "$@"
+' '''
+import sys
+from pytest import console_main
+if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0].removesuffix('.exe')
+    sys.exit(console_main())

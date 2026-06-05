@@ -1,0 +1,351 @@
+{
+  "artifacts": {
+    "json_report": "/Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/pa2_report.json"
+  },
+  "console_summary": "PA2 Report\nGenerated at (UTC): 2026-05-09T19:28:28.533645+00:00\n\nSummary\nPart 1\nCorrectness passed: yes\nYour kernel: 0.2954 ms\nPyTorch ref: 0.3779 ms\nSpeedup vs ref: 1.2795x\nPart 1 base score: 40.0/40.0\nPart 1 extra credit: 5.0/10.0\nPart 1 total with extra credit: 45.0/50.0\nPart 1 tier: >=1.25x\nScoring: Part 1 rubric: incorrect=0, correct but <1.0x=20, >=1.0x=35, >=1.1x=40, >=1.25x=45, >=1.4x=50.\n\nPart 2\nmyallreduce: 10.0/10.0 + bonus 5.0/5.0\nmyalltoall: 10.0/10.0 + bonus 5.0/5.0\ntest_data_split: 5.0/5.0\ntest_get_info: 15.0/15.0\ntest_transformer_forward: 10.0/10.0\ntest_transformer_backward: 10.0/10.0\ndiscussion2-1.txt present: yes, nonempty: yes\nPart 2 base score: 60.0/60.0\nPart 2 bonus: 10.0/10.0\nPart 2 total with bonus: 70.0/70.0\n\nOverall\nBase score: 100.0/100.0\nExtra credit: 15.0/20.0\nTotal with extra credit: 115.0/120.0\n",
+  "cwd": "/Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2",
+  "generated_at_utc": "2026-05-09T19:28:28.533645+00:00",
+  "part1": {
+    "command": [
+      "/Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python",
+      "student_submit.py",
+      "--json",
+      "student_kernel.py"
+    ],
+    "name": "part1_remote_submit",
+    "ok": true,
+    "parsed_stdout": {
+      "result": {
+        "benchmark": {
+          "K": 2048,
+          "M": 2048,
+          "N": 2048,
+          "launch_meta": {
+            "BLOCK_K": 32,
+            "BLOCK_M": 64,
+            "BLOCK_N": 64,
+            "num_stages": 4,
+            "num_warps": 4
+          },
+          "repeats": 500,
+          "warmup_iters": 20
+        },
+        "config_search": {
+          "failures": [],
+          "repeats": 10,
+          "results": [
+            {
+              "config": {
+                "BLOCK_K": 32,
+                "BLOCK_M": 64,
+                "BLOCK_N": 64,
+                "num_stages": 4,
+                "num_warps": 4
+              },
+              "search_ms": 0.29533300000004203
+            }
+          ],
+          "warmup_iters": 3
+        },
+        "correctness": {
+          "max_abs_diff": 0.0625,
+          "ok": true,
+          "reason": ""
+        },
+        "cuda_version": "12.4",
+        "device_name": "NVIDIA A10G",
+        "file_size_bytes": 3280,
+        "filename": "student_kernel.py",
+        "reference_ms": 0.3779361039999998,
+        "selected_config": {
+          "BLOCK_K": 32,
+          "BLOCK_M": 64,
+          "BLOCK_N": 64,
+          "num_stages": 4,
+          "num_warps": 4
+        },
+        "speedup_vs_pytorch": 1.2795365750670564,
+        "status": "ok",
+        "stderr": "",
+        "stdout": "{\"status\": \"ok\", \"torch_version\": \"2.5.1+cu124\", \"triton_version\": \"3.1.0\", \"cuda_version\": \"12.4\", \"device_name\": \"NVIDIA A10G\", \"submitted_configs\": [{\"BLOCK_M\": 64, \"BLOCK_N\": 64, \"BLOCK_K\": 32, \"num_warps\": 4, \"num_stages\": 4}], \"selected_config\": {\"BLOCK_M\": 64, \"BLOCK_N\": 64, \"BLOCK_K\": 32, \"num_warps\": 4, \"num_stages\": 4}, \"config_search\": {\"warmup_iters\": 3, \"repeats\": 10, \"results\": [{\"config\": {\"BLOCK_M\": 64, \"BLOCK_N\": 64, \"BLOCK_K\": 32, \"num_warps\": 4, \"num_stages\": 4}, \"search_ms\": 0.29533300000004203}], \"failures\": []}, \"benchmark\": {\"M\": 2048, \"N\": 2048, \"K\": 2048, \"warmup_iters\": 20, \"repeats\": 500, \"launch_meta\": {\"BLOCK_M\": 64, \"BLOCK_N\": 64, \"BLOCK_K\": 32, \"num_warps\": 4, \"num_stages\": 4}}, \"correctness\": {\"ok\": true, \"reason\": \"\", \"max_abs_diff\": 0.0625}, \"student_ms\": 0.2953695199999995, \"reference_ms\": 0.3779361039999998, \"speedup_vs_pytorch\": 1.2795365750670564}\n",
+        "student_ms": 0.2953695199999995,
+        "submitted_configs": [
+          {
+            "BLOCK_K": 32,
+            "BLOCK_M": 64,
+            "BLOCK_N": 64,
+            "num_stages": 4,
+            "num_warps": 4
+          }
+        ],
+        "torch_version": "2.5.1+cu124",
+        "triton_version": "3.1.0"
+      },
+      "status": "ok",
+      "submit": {
+        "call_id": "fc-01KR73CWNW5NWFKDE1X0TM83J8",
+        "file_size_bytes": 3280,
+        "filename": "student_kernel.py",
+        "result_url": "/result/fc-01KR73CWNW5NWFKDE1X0TM83J8",
+        "status": "submitted"
+      },
+      "warmup": {
+        "http_status": 200,
+        "ok": true
+      }
+    },
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "{\n  \"result\": {\n    \"benchmark\": {\n      \"K\": 2048,\n      \"M\": 2048,\n      \"N\": 2048,\n      \"launch_meta\": {\n        \"BLOCK_K\": 32,\n        \"BLOCK_M\": 64,\n        \"BLOCK_N\": 64,\n        \"num_stages\": 4,\n        \"num_warps\": 4\n      },\n      \"repeats\": 500,\n      \"warmup_iters\": 20\n    },\n    \"config_search\": {\n      \"failures\": [],\n      \"repeats\": 10,\n      \"results\": [\n        {\n          \"config\": {\n            \"BLOCK_K\": 32,\n            \"BLOCK_M\": 64,\n            \"BLOCK_N\": 64,\n            \"num_stages\": 4,\n            \"num_warps\": 4\n          },\n          \"search_ms\": 0.29533300000004203\n        }\n      ],\n      \"warmup_iters\": 3\n    },\n    \"correctness\": {\n      \"max_abs_diff\": 0.0625,\n      \"ok\": true,\n      \"reason\": \"\"\n    },\n    \"cuda_version\": \"12.4\",\n    \"device_name\": \"NVIDIA A10G\",\n    \"file_size_bytes\": 3280,\n    \"filename\": \"student_kernel.py\",\n    \"reference_ms\": 0.3779361039999998,\n    \"selected_config\": {\n      \"BLOCK_K\": 32,\n      \"BLOCK_M\": 64,\n      \"BLOCK_N\": 64,\n      \"num_stages\": 4,\n      \"num_warps\": 4\n    },\n    \"speedup_vs_pytorch\": 1.2795365750670564,\n    \"status\": \"ok\",\n    \"stderr\": \"\",\n    \"stdout\": \"{\\\"status\\\": \\\"ok\\\", \\\"torch_version\\\": \\\"2.5.1+cu124\\\", \\\"triton_version\\\": \\\"3.1.0\\\", \\\"cuda_version\\\": \\\"12.4\\\", \\\"device_name\\\": \\\"NVIDIA A10G\\\", \\\"submitted_configs\\\": [{\\\"BLOCK_M\\\": 64, \\\"BLOCK_N\\\": 64, \\\"BLOCK_K\\\": 32, \\\"num_warps\\\": 4, \\\"num_stages\\\": 4}], \\\"selected_config\\\": {\\\"BLOCK_M\\\": 64, \\\"BLOCK_N\\\": 64, \\\"BLOCK_K\\\": 32, \\\"num_warps\\\": 4, \\\"num_stages\\\": 4}, \\\"config_search\\\": {\\\"warmup_iters\\\": 3, \\\"repeats\\\": 10, \\\"results\\\": [{\\\"config\\\": {\\\"BLOCK_M\\\": 64, \\\"BLOCK_N\\\": 64, \\\"BLOCK_K\\\": 32, \\\"num_warps\\\": 4, \\\"num_stages\\\": 4}, \\\"search_ms\\\": 0.29533300000004203}], \\\"failures\\\": []}, \\\"benchmark\\\": {\\\"M\\\": 2048, \\\"N\\\": 2048, \\\"K\\\": 2048, \\\"warmup_iters\\\": 20, \\\"repeats\\\": 500, \\\"launch_meta\\\": {\\\"BLOCK_M\\\": 64, \\\"BLOCK_N\\\": 64, \\\"BLOCK_K\\\": 32, \\\"num_warps\\\": 4, \\\"num_stages\\\": 4}}, \\\"correctness\\\": {\\\"ok\\\": true, \\\"reason\\\": \\\"\\\", \\\"max_abs_diff\\\": 0.0625}, \\\"student_ms\\\": 0.2953695199999995, \\\"reference_ms\\\": 0.3779361039999998, \\\"speedup_vs_pytorch\\\": 1.2795365750670564}\\n\",\n    \"student_ms\": 0.2953695199999995,\n    \"submitted_configs\": [\n      {\n        \"BLOCK_K\": 32,\n        \"BLOCK_M\": 64,\n        \"BLOCK_N\": 64,\n        \"num_stages\": 4,\n        \"num_warps\": 4\n      }\n    ],\n    \"torch_version\": \"2.5.1+cu124\",\n    \"triton_version\": \"3.1.0\"\n  },\n  \"status\": \"ok\",\n  \"submit\": {\n    \"call_id\": \"fc-01KR73CWNW5NWFKDE1X0TM83J8\",\n    \"file_size_bytes\": 3280,\n    \"filename\": \"student_kernel.py\",\n    \"result_url\": \"/result/fc-01KR73CWNW5NWFKDE1X0TM83J8\",\n    \"status\": \"submitted\"\n  },\n  \"warmup\": {\n    \"http_status\": 200,\n    \"ok\": true\n  }\n}\n"
+  },
+  "part2": {
+    "myallreduce": {
+      "command": [
+        "mpirun",
+        "-n",
+        "8",
+        "/Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python",
+        "mpi-test.py",
+        "--test_case",
+        "myallreduce"
+      ],
+      "name": "myallreduce",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "Run 0: Correct results.\nRun 1: Correct results.\nRun 2: Correct results.\nRun 3: Correct results.\nRun 4: Correct results.\nRun 5: Correct results.\nRun 6: Correct results.\nRun 7: Correct results.\nRun 8: Correct results.\nRun 9: Correct results.\nRun 10: Correct results.\nRun 11: Correct results.\nRun 12: Correct results.\nRun 13: Correct results.\nRun 14: Correct results.\nRun 15: Correct results.\nRun 16: Correct results.\nRun 17: Correct results.\nRun 18: Correct results.\nRun 19: Correct results.\nRun 20: Correct results.\nRun 21: Correct results.\nRun 22: Correct results.\nRun 23: Correct results.\nRun 24: Correct results.\nRun 25: Correct results.\nRun 26: Correct results.\nRun 27: Correct results.\nRun 28: Correct results.\nRun 29: Correct results.\nRun 30: Correct results.\nRun 31: Correct results.\nRun 32: Correct results.\nRun 33: Correct results.\nRun 34: Correct results.\nRun 35: Correct results.\nRun 36: Correct results.\nRun 37: Correct results.\nRun 38: Correct results.\nRun 39: Correct results.\nRun 40: Correct results.\nRun 41: Correct results.\nRun 42: Correct results.\nRun 43: Correct results.\nRun 44: Correct results.\nRun 45: Correct results.\nRun 46: Correct results.\nRun 47: Correct results.\nRun 48: Correct results.\nRun 49: Correct results.\nRun 50: Correct results.\nRun 51: Correct results.\nRun 52: Correct results.\nRun 53: Correct results.\nRun 54: Correct results.\nRun 55: Correct results.\nRun 56: Correct results.\nRun 57: Correct results.\nRun 58: Correct results.\nRun 59: Correct results.\nRun 60: Correct results.\nRun 61: Correct results.\nRun 62: Correct results.\nRun 63: Correct results.\nRun 64: Correct results.\nRun 65: Correct results.\nRun 66: Correct results.\nRun 67: Correct results.\nRun 68: Correct results.\nRun 69: Correct results.\nRun 70: Correct results.\nRun 71: Correct results.\nRun 72: Correct results.\nRun 73: Correct results.\nRun 74: Correct results.\nRun 75: Correct results.\nRun 76: Correct results.\nRun 77: Correct results.\nRun 78: Correct results.\nRun 79: Correct results.\nRun 80: Correct results.\nRun 81: Correct results.\nRun 82: Correct results.\nRun 83: Correct results.\nRun 84: Correct results.\nRun 85: Correct results.\nRun 86: Correct results.\nRun 87: Correct results.\nRun 88: Correct results.\nRun 89: Correct results.\nRun 90: Correct results.\nRun 91: Correct results.\nRun 92: Correct results.\nRun 93: Correct results.\nRun 94: Correct results.\nRun 95: Correct results.\nRun 96: Correct results.\nRun 97: Correct results.\nRun 98: Correct results.\nRun 99: Correct results.\n\nSummary over 100 runs:\nAll runs produced correct results.\nAverage MPI.Allreduce time: 0.017976 seconds\nAverage myAllreduce time:   0.017288 seconds\n"
+    },
+    "myalltoall": {
+      "command": [
+        "mpirun",
+        "-n",
+        "8",
+        "/Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python",
+        "mpi-test.py",
+        "--test_case",
+        "myalltoall"
+      ],
+      "name": "myalltoall",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "Run 0: Correct results.\nRun 1: Correct results.\nRun 2: Correct results.\nRun 3: Correct results.\nRun 4: Correct results.\nRun 5: Correct results.\nRun 6: Correct results.\nRun 7: Correct results.\nRun 8: Correct results.\nRun 9: Correct results.\nRun 10: Correct results.\nRun 11: Correct results.\nRun 12: Correct results.\nRun 13: Correct results.\nRun 14: Correct results.\nRun 15: Correct results.\nRun 16: Correct results.\nRun 17: Correct results.\nRun 18: Correct results.\nRun 19: Correct results.\nRun 20: Correct results.\nRun 21: Correct results.\nRun 22: Correct results.\nRun 23: Correct results.\nRun 24: Correct results.\nRun 25: Correct results.\nRun 26: Correct results.\nRun 27: Correct results.\nRun 28: Correct results.\nRun 29: Correct results.\nRun 30: Correct results.\nRun 31: Correct results.\nRun 32: Correct results.\nRun 33: Correct results.\nRun 34: Correct results.\nRun 35: Correct results.\nRun 36: Correct results.\nRun 37: Correct results.\nRun 38: Correct results.\nRun 39: Correct results.\nRun 40: Correct results.\nRun 41: Correct results.\nRun 42: Correct results.\nRun 43: Correct results.\nRun 44: Correct results.\nRun 45: Correct results.\nRun 46: Correct results.\nRun 47: Correct results.\nRun 48: Correct results.\nRun 49: Correct results.\nRun 50: Correct results.\nRun 51: Correct results.\nRun 52: Correct results.\nRun 53: Correct results.\nRun 54: Correct results.\nRun 55: Correct results.\nRun 56: Correct results.\nRun 57: Correct results.\nRun 58: Correct results.\nRun 59: Correct results.\nRun 60: Correct results.\nRun 61: Correct results.\nRun 62: Correct results.\nRun 63: Correct results.\nRun 64: Correct results.\nRun 65: Correct results.\nRun 66: Correct results.\nRun 67: Correct results.\nRun 68: Correct results.\nRun 69: Correct results.\nRun 70: Correct results.\nRun 71: Correct results.\nRun 72: Correct results.\nRun 73: Correct results.\nRun 74: Correct results.\nRun 75: Correct results.\nRun 76: Correct results.\nRun 77: Correct results.\nRun 78: Correct results.\nRun 79: Correct results.\nRun 80: Correct results.\nRun 81: Correct results.\nRun 82: Correct results.\nRun 83: Correct results.\nRun 84: Correct results.\nRun 85: Correct results.\nRun 86: Correct results.\nRun 87: Correct results.\nRun 88: Correct results.\nRun 89: Correct results.\nRun 90: Correct results.\nRun 91: Correct results.\nRun 92: Correct results.\nRun 93: Correct results.\nRun 94: Correct results.\nRun 95: Correct results.\nRun 96: Correct results.\nRun 97: Correct results.\nRun 98: Correct results.\nRun 99: Correct results.\n\nSummary over 100 runs:\nAll runs produced correct results.\nAverage MPI.Alltoall time: 0.011346 seconds\nAverage myAlltoall time:   0.010931 seconds\n"
+    },
+    "test_data_split": {
+      "command": [
+        "/Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-l",
+        "-v",
+        "tests/test_data_split.py"
+      ],
+      "name": "test_data_split",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "============================= test session starts ==============================\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\ncollecting ... collected 4 items\n\ntests/test_data_split.py::test_mp_2_dp_1 PASSED                          [ 25%]\ntests/test_data_split.py::test_mp_1_dp_2 PASSED                          [ 50%]\ntests/test_data_split.py::test_mp_2_dp_2 PASSED                          [ 75%]\ntests/test_data_split.py::test_mp_2_dp_4 PASSED                          [100%]\n\n============================== 4 passed in 0.38s ===============================\n"
+    },
+    "test_get_info": {
+      "command": [
+        "mpirun",
+        "-n",
+        "8",
+        "/Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-l",
+        "-v",
+        "--with-mpi",
+        "tests/test_get_info.py"
+      ],
+      "name": "test_get_info",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0m\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\n\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\ncachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0m\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0m\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\n\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0mcachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0m\u001b[1mcollecting ... \u001b[0m\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\n\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0mcachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0m\u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_get_info.py::test_fc_q \u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_get_info.py::test_fc_q \u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_get_info.py::test_fc_q \u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_get_info.py::test_fc_q \u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_get_info.py::test_fc_q \u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_get_info.py::test_fc_q \u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_get_info.py::test_fc_q \u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_get_info.py::test_fc_q \u001b[32mPASSED\u001b[0m\u001b[32m                                 [ 50%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m                                 [ 50%]\u001b[0m\ntests/test_get_info.py::test_fc_o \u001b[32mPASSED\u001b[0m\u001b[32m                                 [ 50%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m                                 [ 50%]\u001b[0m\ntests/test_get_info.py::test_fc_o \ntests/test_get_info.py::test_fc_o \ntests/test_get_info.py::test_fc_o \u001b[32mPASSED\u001b[0m\u001b[32m                                 [ 50%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m                                 [ 50%]\u001b[0m\ntests/test_get_info.py::test_fc_o \ntests/test_get_info.py::test_fc_o \u001b[32mPASSED\u001b[0m\u001b[32m                                 [ 50%]\u001b[0m\ntests/test_get_info.py::test_fc_o \u001b[32mPASSED\u001b[0m\u001b[32m                                 [ 50%]\u001b[0m\ntests/test_get_info.py::test_fc_o \u001b[32mPASSED\u001b[0m\u001b[32m                                 [100%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m                                 [100%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m                                 [100%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m                                 [100%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m                                 [100%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m                                 [100%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m                                 [100%]\u001b[0m\n\u001b[32mPASSED\u001b[0m\u001b[32m                                 [100%]\u001b[0m\n=============================== MPI Information ================================\nrank: 5\nsize: 8\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\n\n=============================== MPI Information ================================\nrank: 0\nsize: 8\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\n\n=============================== MPI Information ================================\nrank: 7\nsize: 8\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\n=============================== MPI Information ================================\n\n=============================== MPI Information ================================\nrank: 4\nsize: 8\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\nrank: 2\nsize: 8\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\n\n=============================== MPI Information ================================\nrank: 6\nsize: 8\n\n=============================== MPI Information ================================\nrank: 3\nsize: 8\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\n\n=============================== MPI Information ================================\nrank: 1\nsize: 8\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 1.54s\u001b[0m\u001b[32m ===============================\u001b[0m\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 1.50s\u001b[0m\u001b[32m ===============================\u001b[0m\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 1.50s\u001b[0m\u001b[32m ===============================\u001b[0m\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 1.52s\u001b[0m\u001b[32m ===============================\u001b[0m\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 1.52s\u001b[0m\u001b[32m ===============================\u001b[0m\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 1.53s\u001b[0m\u001b[32m ===============================\u001b[0m\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 1.52s\u001b[0m\u001b[32m ===============================\u001b[0m\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 1.52s\u001b[0m\u001b[32m ===============================\u001b[0m\n"
+    },
+    "test_transformer_backward": {
+      "command": [
+        "mpirun",
+        "-n",
+        "4",
+        "/Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-l",
+        "-v",
+        "--with-mpi",
+        "tests/test_transformer_backward.py"
+      ],
+      "name": "test_transformer_backward",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\n\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\n\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0mcachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0mcachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0m\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0m\u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_transformer_backward.py::test_fc2_naive_mp_backward_output_3d \u001b[32mPASSED\u001b[0m\u001b[32m [ 50%]\u001b[0m\ntests/test_transformer_backward.py::test_fc2_naive_mp_backward_x_3d \u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_transformer_backward.py::test_fc2_naive_mp_backward_output_3d \u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_transformer_backward.py::test_fc2_naive_mp_backward_output_3d \u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_transformer_backward.py::test_fc2_naive_mp_backward_output_3d \u001b[32mPASSED\u001b[0m\u001b[32m [ 50%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m [ 50%]\u001b[0m\ntests/test_transformer_backward.py::test_fc2_naive_mp_backward_x_3d \ntests/test_transformer_backward.py::test_fc2_naive_mp_backward_x_3d \u001b[32mPASSED\u001b[0m\u001b[32m [ 50%]\u001b[0m\ntests/test_transformer_backward.py::test_fc2_naive_mp_backward_x_3d \u001b[32mPASSED\u001b[0m\u001b[32m [100%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m [100%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m [100%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m [100%]\u001b[0m\n\n=============================== MPI Information ================================\nrank: 1\nsize: 4\nMPI version: 3.1\n=============================== MPI Information ================================\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nrank: 3\nsize: 4\nmpi4py config:\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\n\n=============================== MPI Information ================================\nrank: 0\nsize: 4\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\n\n=============================== MPI Information ================================\nrank: 2\nsize: 4\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 0.61s\u001b[0m\u001b[32m ===============================\u001b[0m\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 0.61s\u001b[0m\u001b[32m ===============================\u001b[0m\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 0.62s\u001b[0m\u001b[32m ===============================\u001b[0m\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 0.61s\u001b[0m\u001b[32m ===============================\u001b[0m\n"
+    },
+    "test_transformer_forward": {
+      "command": [
+        "mpirun",
+        "-n",
+        "4",
+        "/Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-l",
+        "-v",
+        "--with-mpi",
+        "tests/test_transformer_forward.py"
+      ],
+      "name": "test_transformer_forward",
+      "ok": true,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\n\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\n\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0m\u001b[1m============================= test session starts ==============================\u001b[0m\nplatform darwin -- Python 3.10.20, pytest-8.0.1, pluggy-1.4.0 -- /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/.venv/bin/python\ncachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0mcachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0mcachedir: .pytest_cache\nrootdir: /Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2\nplugins: mpi-0.6, reportlog-0.4.0\n\u001b[1mcollecting ... \u001b[0m\u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_transformer_forward.py::test_fc_o_naive_mp_forward_x_3d \u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_transformer_forward.py::test_fc_o_naive_mp_forward_x_3d \u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_transformer_forward.py::test_fc_o_naive_mp_forward_x_3d \u001b[1m\ncollecting 2 items                                                             \u001b[0m\u001b[1m\ncollected 2 items                                                              \u001b[0m\n\ntests/test_transformer_forward.py::test_fc_o_naive_mp_forward_x_3d \u001b[32mPASSED\u001b[0m\u001b[32m [ 50%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m [ 50%]\u001b[0m\ntests/test_transformer_forward.py::test_fc_o_naive_mp_forward_output_3d \ntests/test_transformer_forward.py::test_fc_o_naive_mp_forward_output_3d \u001b[32mPASSED\u001b[0m\u001b[32m [ 50%]\u001b[0m\ntests/test_transformer_forward.py::test_fc_o_naive_mp_forward_output_3d \u001b[32mPASSED\u001b[0m\u001b[32m [ 50%]\u001b[0m\ntests/test_transformer_forward.py::test_fc_o_naive_mp_forward_output_3d \u001b[32mPASSED\u001b[0m\u001b[32m [100%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m [100%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m [100%]\u001b[0m\u001b[32mPASSED\u001b[0m\u001b[32m [100%]\u001b[0m\n=============================== MPI Information ================================\nrank: 2\nsize: 4\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \n\nmpi4py config:\n=============================== MPI Information ================================\nrank: 1\nsize: 4\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\n\n=============================== MPI Information ================================\nrank: 3\nsize: 4\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\n\n=============================== MPI Information ================================\nrank: 0\nsize: 4\nMPI version: 3.1\nMPI library version: Open MPI v5.0.9, package: Open MPI brew@Tahoe-arm64.local Distribution, ident: 5.0.9, repo rev: v5.0.9, Oct 30, 2025\u0000\nMPI vendor: Open MPI 5.0.9\nmpi4py rc: \nmpi4py config:\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 0.63s\u001b[0m\u001b[32m ===============================\u001b[0m\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 0.63s\u001b[0m\u001b[32m ===============================\u001b[0m\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 0.63s\u001b[0m\u001b[32m ===============================\u001b[0m\n\n\u001b[32m============================== \u001b[32m\u001b[1m2 passed\u001b[0m\u001b[32m in 0.63s\u001b[0m\u001b[32m ===============================\u001b[0m\n"
+    }
+  },
+  "summary": {
+    "overall": {
+      "base_points_earned": 100.0,
+      "base_points_max": 100.0,
+      "extra_credit_points_earned": 15.0,
+      "extra_credit_points_max": 20.0,
+      "total_points_with_extra_credit": 115.0,
+      "total_points_with_extra_credit_max": 120.0
+    },
+    "part1": {
+      "base_points": 40.0,
+      "base_points_max": 40.0,
+      "correctness_ok": true,
+      "device_name": "NVIDIA A10G",
+      "extra_credit_max": 10.0,
+      "extra_credit_points": 5.0,
+      "max_abs_diff": 0.0625,
+      "reference_ms": 0.3779361039999998,
+      "score_note": "Part 1 rubric: incorrect=0, correct but <1.0x=20, >=1.0x=35, >=1.1x=40, >=1.25x=45, >=1.4x=50.",
+      "score_tier": ">=1.25x",
+      "speedup_vs_pytorch": 1.2795365750670564,
+      "student_ms": 0.2953695199999995,
+      "total_points_with_extra_credit": 45.0,
+      "total_points_with_extra_credit_max": 50.0
+    },
+    "part2": {
+      "base_points_earned": 60.0,
+      "base_points_max": 60.0,
+      "bonus_points_earned": 10.0,
+      "bonus_points_max": 10.0,
+      "discussion2_1": {
+        "chars": 506,
+        "exists": true,
+        "nonempty": true,
+        "path": "/Users/ksheersagaragrawal/Desktop/SP26/DSC 291A - MLSystems/cse-dsc291-s26-pa/pa2/discussion2-1.txt"
+      },
+      "section_scores": {
+        "myallreduce": {
+          "all_correct": true,
+          "bonus_earned": 5.0,
+          "bonus_max": 5.0,
+          "points_earned": 10.0,
+          "points_max": 10.0,
+          "reference_time_seconds": 0.017976,
+          "section": "2.1",
+          "student_time_seconds": 0.017288,
+          "student_vs_reference_ratio": 0.9617267467734759
+        },
+        "myalltoall": {
+          "all_correct": true,
+          "bonus_earned": 5.0,
+          "bonus_max": 5.0,
+          "points_earned": 10.0,
+          "points_max": 10.0,
+          "reference_time_seconds": 0.011346,
+          "section": "2.1",
+          "student_time_seconds": 0.010931,
+          "student_vs_reference_ratio": 0.9634232328573946
+        },
+        "test_data_split": {
+          "all_passed": true,
+          "expected_tests": 4,
+          "failed_tests": 0,
+          "observed_tests": 4,
+          "parse_method": "returncode",
+          "passed_tests": 4,
+          "points_earned": 5.0,
+          "points_max": 5.0,
+          "section": "2.2",
+          "summary_counts": {
+            "errors": 0,
+            "failed": 0,
+            "passed": 4,
+            "skipped": 0,
+            "xfailed": 0,
+            "xpassed": 0
+          },
+          "test_statuses": {}
+        },
+        "test_get_info": {
+          "all_passed": true,
+          "expected_tests": 2,
+          "failed_tests": 0,
+          "observed_tests": 2,
+          "parse_method": "returncode",
+          "passed_tests": 2,
+          "points_earned": 15.0,
+          "points_max": 15.0,
+          "section": "2.3",
+          "summary_counts": {
+            "errors": 0,
+            "failed": 0,
+            "passed": 2,
+            "skipped": 0,
+            "xfailed": 0,
+            "xpassed": 0
+          },
+          "test_statuses": {}
+        },
+        "test_transformer_backward": {
+          "all_passed": true,
+          "expected_tests": 2,
+          "failed_tests": 0,
+          "observed_tests": 2,
+          "parse_method": "returncode",
+          "passed_tests": 2,
+          "points_earned": 10.0,
+          "points_max": 10.0,
+          "section": "2.5",
+          "summary_counts": {
+            "errors": 0,
+            "failed": 0,
+            "passed": 2,
+            "skipped": 0,
+            "xfailed": 0,
+            "xpassed": 0
+          },
+          "test_statuses": {}
+        },
+        "test_transformer_forward": {
+          "all_passed": true,
+          "expected_tests": 2,
+          "failed_tests": 0,
+          "observed_tests": 2,
+          "parse_method": "returncode",
+          "passed_tests": 2,
+          "points_earned": 10.0,
+          "points_max": 10.0,
+          "section": "2.4",
+          "summary_counts": {
+            "errors": 0,
+            "failed": 0,
+            "passed": 2,
+            "skipped": 0,
+            "xfailed": 0,
+            "xpassed": 0
+          },
+          "test_statuses": {}
+        }
+      },
+      "total_points_with_bonus": 70.0,
+      "total_points_with_bonus_max": 70.0
+    }
+  }
+}

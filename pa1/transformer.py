@@ -191,7 +191,15 @@ def causal_self_attention(
     - Use ad.softmax(node, dim=-1).
     - Divide by sqrt(model_dim) using the / operator (divides by a constant).
     """
-    """TODO: Your code here"""
+    Q = ad.matmul(X, W_Q)
+    K = ad.matmul(X, W_K)
+    V = ad.matmul(X, W_V)
+    k_t = ad.transpose(K, 1, 2)
+    scores = ad.matmul(Q, k_t) / math.sqrt(model_dim)
+    scores = scores + mask
+    attn = ad.softmax(scores, dim=-1)
+    attn_out = ad.matmul(attn, V)
+    return ad.matmul(attn_out, W_O)
 
 
 # ============================================================
@@ -249,7 +257,10 @@ def decoder_layer(
     - Use ad.matmul for matrix multiplication.
     - The + operator on nodes performs element-wise addition (residual connection).
     """
-    """TODO: Your code here"""
+    attn_out = causal_self_attention(X, W_Q, W_K, W_V, W_O, mask, model_dim)
+    h = ad.layernorm(X + attn_out, normalized_shape=[model_dim], eps=eps)
+    ff = ad.matmul(ad.relu(ad.matmul(h, W_ff1)), W_ff2)
+    return ad.layernorm(h + ff, normalized_shape=[model_dim], eps=eps)
 
 
 # ============================================================
@@ -306,7 +317,12 @@ def transformer_lm(
     3. h = decoder_layer(h, W_Q, ..., mask, model_dim, ff_dim, eps)
     4. logits = h @ W_head                   → (batch, seq_len, vocab_size)
     """
-    """TODO: Your code here"""
+    emb = ad.matmul(X_onehot, W_embed)
+    h = emb + pos_embed
+    h = decoder_layer(
+        h, W_Q, W_K, W_V, W_O, W_ff1, W_ff2, mask, model_dim, ff_dim, eps
+    )
+    return ad.matmul(h, W_head)
 
 
 def cross_entropy_loss(
@@ -349,7 +365,11 @@ def cross_entropy_loss(
     You do NOT need to implement a numerically stable version (log-sum-exp trick).
     The simple softmax → log approach is fine for this assignment.
     """
-    """TODO: Your code here"""
+    probs = ad.softmax(logits, dim=-1)
+    logp = ad.log(ad.add_by_const(probs, 1e-10))
+    ce = ad.mul(targets_onehot, logp)
+    s = ad.sum_op(ce, dim=(0, 1, 2), keepdim=True)
+    return ad.div_by_const(ad.mul_by_const(s, -1.0), float(num_tokens))
 
 
 # ============================================================
@@ -412,7 +432,11 @@ def sgd_epoch(
     # You must sum over dim 0 before subtracting:
     #     new_W = W - lr * grad.sum(dim=0)
     # Return the updated model_weights list and float(loss_val).
-    """TODO: Your code here"""
+    new_weights: List[torch.Tensor] = []
+    for w, g in zip(model_weights, grads):
+        new_weights.append((w - lr * g.sum(dim=0)).clone())
+    lv = float(loss_val.item()) if isinstance(loss_val, torch.Tensor) else float(loss_val)
+    return new_weights, lv
 
 
 def generate(
@@ -490,7 +514,17 @@ def generate(
     #    c. If next_token == 0 (PAD) or len(tokens) > SEQ_LEN, stop.
     #    d. Append next_token to the token list.
     # 3. Return decode(tokens).
-    """TODO: Your code here"""
+    tokens = list(encode(prompt))
+    for _ in range(max_new_tokens):
+        if len(tokens) > SEQ_LEN or len(tokens) >= NUM_WORDS:
+            break
+        logits = run_forward(tokens)
+        pos = min(len(tokens), SEQ_LEN) - 1
+        next_t = int(logits[0, pos].argmax().item())
+        if next_t == 0:
+            break
+        tokens.append(next_t)
+    return decode(tokens)
 
 
 def save_weights(model_weights: List[torch.Tensor], path: str = "weights.pt") -> None:
