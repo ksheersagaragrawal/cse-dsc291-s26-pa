@@ -122,11 +122,15 @@ class ShardedLinear:
         if x.shape[0] == 0:
             return np.zeros((0, self.out_features_global), dtype=np.float32)
 
-        result = np.zeros((x.shape[0], self.out_features_global), dtype=np.float32)
+        # Compute local partial output: (batch_size, local_out_features)
+        local_output = np.dot(x, self.weight) + self.bias
 
-        # TODO (Part 1.1): compute this rank's partial output and use a
-        # collective so every rank ends up with the full
-        # (batch_size, out_features) result.
+        # Use Allgather to gather all local outputs along the output dimension
+        # Each rank sends its (batch_size, local_out_features) slice
+        gathered = mpi.allgather(local_output)
+        
+        # Concatenate along the output dimension to get full (batch_size, out_features_global)
+        result = np.concatenate(gathered, axis=1)
         return result
 
 
@@ -185,11 +189,17 @@ class MoE_TP:
         batch_size = x.shape[0]
         outputs = np.zeros((batch_size, self.output_dim))
 
-        # TODO (Part 1.1): implement the TP-style forward pass.
-        # 1. Get routing indices and gates from self.router(x, self.topk).
-        # 2. Run each routed token through its assigned expert and
-        #    gate-combine the results into `outputs`.
+        # Get routing indices and gates from self.router(x, self.topk).
         indices, gates = self.router(x, self.topk)
+
+        # For each token and each expert it was routed to, run it through the expert
+        for k in range(self.topk):
+            for i in range(batch_size):
+                expert_idx = indices[i, k]
+                gate = gates[i, k]
+                item = x[i : i + 1]  # shape (1, input_dim)
+                expert_output = self.experts[expert_idx](item)  # shape (1, output_dim)
+                outputs[i] += gate * expert_output[0]
 
         return outputs
 
@@ -244,12 +254,45 @@ class MoE_EP:
         batch_size = x.shape[0]
         outputs = np.zeros((batch_size, self.output_dim))
 
-        # TODO (Part 1.2): implement the EP-style forward pass.
-        # 1. Get routing indices and gates from self.router(x, self.topk).
-        # 2. Send each token to the rank that owns its assigned expert.
-        # 3. Run this rank's local expert on the tokens it received.
-        # 4. Send the results back and gate-combine into `outputs`.
+        # Get routing indices and gates from self.router(x, self.topk).
         indices, gates = self.router(x, self.topk)
+
+        # Build send buckets: buckets[dest_rank] = list of (token_idx, item, gate, k)
+        # for tokens destined to that rank
+        buckets = [[] for _ in range(self.world_size)]
+        for k in range(self.topk):
+            for i in range(batch_size):
+                expert_idx = indices[i, k]
+                gate = gates[i, k]
+                item = x[i : i + 1]  # shape (1, input_dim)
+                buckets[expert_idx].append((i, item, gate, k))
+
+        # Use all-to-all to send buckets to their destination ranks and receive buckets from others
+        received_buckets = mpi.alltoall(buckets)
+
+        # Run this rank's expert on all received tokens and store results
+        # received_buckets[src_rank] = list of (token_idx, item, gate, k)
+        token_results = {}  # (src_rank, token_idx, k) -> output
+        for src_rank, bucket in enumerate(received_buckets):
+            for token_idx, item, gate, k in bucket:
+                expert_output = self.expert(item)  # shape (1, output_dim)
+                token_results[(src_rank, token_idx, k)] = expert_output[0]
+
+        # Send results back: results[dest_rank] = list of (token_idx, k, output)
+        result_buckets = [[] for _ in range(self.world_size)]
+        for (src_rank, token_idx, k), output in token_results.items():
+            result_buckets[src_rank].append((token_idx, k, output))
+
+        # Use all-to-all again to send results back
+        received_results = mpi.alltoall(result_buckets)
+
+        # Reconstruct outputs by combining results from all experts
+        for expert_rank, results in enumerate(received_results):
+            for token_idx, k, output in results:
+                # Retrieve the gate weight that was used for this expert
+                expert_idx = indices[token_idx, k]
+                gate = gates[token_idx, k]
+                outputs[token_idx] += gate * output
 
         return outputs
 
