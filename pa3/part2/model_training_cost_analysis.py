@@ -17,6 +17,15 @@ import json
 import math
 
 
+def _load_config(model_config_path):
+    with open(model_config_path, "r") as f:
+        return json.load(f)
+
+
+def _bf16_bytes(num_elements):
+    return num_elements * 2
+
+
 def model_training_cost_analysis_llama(model_config_path):
     """Analyze training cost of a dense Llama-style model.
 
@@ -27,8 +36,81 @@ def model_training_cost_analysis_llama(model_config_path):
 
     See the Part 2.1 writeup for the sequence-length / batch convention.
     """
-    # TODO: implement.
-    raise NotImplementedError
+    config = _load_config(model_config_path)
+
+    hidden_size = config["hidden_size"]
+    intermediate_size = config["intermediate_size"]
+    num_layers = config["num_hidden_layers"]
+    num_attention_heads = config["num_attention_heads"]
+    num_key_value_heads = config["num_key_value_heads"]
+    vocab_size = config["vocab_size"]
+    max_seq_len = config["max_position_embeddings"]
+    tie_word_embeddings = config.get("tie_word_embeddings", True)
+
+    head_dim = hidden_size // num_attention_heads
+    kv_dim = num_key_value_heads * head_dim
+
+    token_embedding_params = vocab_size * hidden_size
+    lm_head_params = 0 if tie_word_embeddings else vocab_size * hidden_size
+
+    attention_params_per_layer = (
+        hidden_size * hidden_size  # q_proj
+        + hidden_size * kv_dim     # k_proj
+        + hidden_size * kv_dim     # v_proj
+        + hidden_size * hidden_size  # o_proj
+    )
+    mlp_params_per_layer = (
+        hidden_size * intermediate_size  # gate_proj
+        + hidden_size * intermediate_size  # up_proj
+        + intermediate_size * hidden_size  # down_proj
+    )
+    norm_params_per_layer = 2 * hidden_size  # input + post-attn RMSNorm
+
+    total_params = (
+        token_embedding_params
+        + lm_head_params
+        + num_layers * (attention_params_per_layer + mlp_params_per_layer + norm_params_per_layer)
+        + hidden_size  # final RMSNorm
+    )
+
+    batch_size = 1
+    proj_flops = 2 * batch_size * max_seq_len * (
+        hidden_size * hidden_size
+        + hidden_size * kv_dim
+        + hidden_size * kv_dim
+        + hidden_size * hidden_size
+    )
+    attention_flops = 2 * batch_size * num_attention_heads * max_seq_len * max_seq_len * head_dim
+    attention_flops *= 2  # QK^T and attention·V
+    mlp_flops = 2 * batch_size * max_seq_len * (
+def _load_config(model_config_path):
+    with open(model_config_path, "r") as f:
+        return json.load(f)
+
+def _bf16_bytes(num_elements):
+    return 2 * num_elements
+
+        hidden_size * intermediate_size
+        + hidden_size * intermediate_size
+        + intermediate_size * hidden_size
+    )
+    flops_layer_TF = (proj_flops + attention_flops + mlp_flops) / 1e12
+
+    hidden_bytes = _bf16_bytes(batch_size * max_seq_len * hidden_size)
+    q_bytes = hidden_bytes
+    kv_bytes = _bf16_bytes(batch_size * max_seq_len * kv_dim)
+    attn_scores_bytes = _bf16_bytes(batch_size * num_attention_heads * max_seq_len * max_seq_len)
+    mlp_hidden_bytes = _bf16_bytes(batch_size * max_seq_len * intermediate_size)
+
+    peak_bytes = max(
+        hidden_bytes + q_bytes + 2 * kv_bytes,
+        hidden_bytes + q_bytes + 2 * kv_bytes + attn_scores_bytes,
+        hidden_bytes + 2 * mlp_hidden_bytes,
+        hidden_bytes + q_bytes + hidden_bytes,
+    )
+    peak_memory_GB = peak_bytes / (1024 ** 3)
+
+    return int(total_params), flops_layer_TF, peak_memory_GB
 
 
 def model_training_cost_analysis_deepseek(model_config_path):
@@ -37,8 +119,91 @@ def model_training_cost_analysis_deepseek(model_config_path):
     Same return signature as the Llama version. See the Part 2.3 writeup
     for the MLA attention and the dense-vs-MoE layer breakdown.
     """
-    # TODO: implement.
-    raise NotImplementedError
+    config = _load_config(model_config_path)
+
+    hidden_size = config["hidden_size"]
+    intermediate_size = config["intermediate_size"]
+    num_layers = config["num_hidden_layers"]
+    vocab_size = config["vocab_size"]
+    first_k_dense_replace = config["first_k_dense_replace"]
+    n_routed_experts = config["n_routed_experts"]
+    n_shared_experts = config["n_shared_experts"]
+    moe_intermediate_size = config["moe_intermediate_size"]
+    q_lora_rank = config["q_lora_rank"]
+    kv_lora_rank = config["kv_lora_rank"]
+    qk_nope_head_dim = config["qk_nope_head_dim"]
+    qk_rope_head_dim = config["qk_rope_head_dim"]
+    v_head_dim = config["v_head_dim"]
+    num_attention_heads = config["num_attention_heads"]
+    num_key_value_heads = config["num_key_value_heads"]
+    max_seq_len = config["max_position_embeddings"]
+
+    token_embedding_params = vocab_size * hidden_size
+
+    q_out_dim = num_attention_heads * (qk_nope_head_dim + qk_rope_head_dim)
+    kv_out_dim = num_key_value_heads * (qk_nope_head_dim + qk_rope_head_dim + v_head_dim)
+    attention_params_per_layer = (
+        hidden_size * q_lora_rank + q_lora_rank * q_out_dim
+        + hidden_size * kv_lora_rank + kv_lora_rank * kv_out_dim
+        + hidden_size * hidden_size
+    )
+
+    dense_mlp_params = (
+        hidden_size * intermediate_size
+        + hidden_size * intermediate_size
+        + intermediate_size * hidden_size
+    )
+    moe_expert_params = (
+        hidden_size * moe_intermediate_size
+        + hidden_size * moe_intermediate_size
+        + moe_intermediate_size * hidden_size
+    )
+    router_params = hidden_size * n_routed_experts
+    moe_mlp_params = router_params + (n_routed_experts + n_shared_experts) * moe_expert_params
+
+    dense_layers = first_k_dense_replace
+    moe_layers = num_layers - dense_layers
+    norm_params_per_layer = 2 * hidden_size
+
+    total_params = (
+        token_embedding_params
+        + dense_layers * (attention_params_per_layer + dense_mlp_params + norm_params_per_layer)
+        + moe_layers * (attention_params_per_layer + moe_mlp_params + norm_params_per_layer)
+        + hidden_size
+    )
+
+    batch_size = 1
+    proj_flops = 2 * batch_size * max_seq_len * (
+        hidden_size * q_lora_rank
+        + q_lora_rank * q_out_dim
+        + hidden_size * kv_lora_rank
+        + kv_lora_rank * kv_out_dim
+        + hidden_size * hidden_size
+    )
+    attention_flops = 2 * batch_size * num_attention_heads * max_seq_len * max_seq_len * (hidden_size // num_attention_heads)
+    attention_flops *= 2
+    mlp_flops = 2 * batch_size * max_seq_len * (
+        hidden_size * intermediate_size
+        + hidden_size * intermediate_size
+        + intermediate_size * hidden_size
+    )
+    flops_layer_TF = (proj_flops + attention_flops + mlp_flops) / 1e12
+
+    hidden_bytes = _bf16_bytes(batch_size * max_seq_len * hidden_size)
+    q_bytes = _bf16_bytes(batch_size * max_seq_len * q_out_dim)
+    kv_bytes = _bf16_bytes(batch_size * max_seq_len * kv_out_dim)
+    attn_scores_bytes = _bf16_bytes(batch_size * num_attention_heads * max_seq_len * max_seq_len)
+    mlp_hidden_bytes = _bf16_bytes(batch_size * max_seq_len * intermediate_size)
+
+    peak_bytes = max(
+        hidden_bytes + q_bytes + kv_bytes,
+        hidden_bytes + q_bytes + kv_bytes + attn_scores_bytes,
+        hidden_bytes + 2 * mlp_hidden_bytes,
+        hidden_bytes + q_bytes + hidden_bytes,
+    )
+    peak_memory_GB = peak_bytes / (1024 ** 3)
+
+    return int(total_params), flops_layer_TF, peak_memory_GB
 
 
 def get_optimal_N_D_from_cost(cost_budget):
@@ -54,8 +219,35 @@ def get_optimal_N_D_from_cost(cost_budget):
     See the Part 2.2 writeup for the scaling law, the GPU price / TFLOPs
     table, and the MFU assumption.
     """
-    # TODO: implement.
-    raise NotImplementedError
+    mfu = 0.40
+    gpu_specs = {
+        "H100": {"hourly_cost": 3.0, "peak_tflops": 989.0},
+        "H200": {"hourly_cost": 4.0, "peak_tflops": 989.0},
+        "B200": {"hourly_cost": 6.0, "peak_tflops": 2250.0},
+    }
+
+    best_gpu = None
+    training_budget_flops = None
+    best_effective_flops = -1.0
+    for gpu_name, spec in gpu_specs.items():
+        effective_flops = (
+            (cost_budget / spec["hourly_cost"]) * 3600.0 * spec["peak_tflops"] * 1e12 * mfu
+        )
+        if effective_flops > best_effective_flops:
+            best_effective_flops = effective_flops
+            best_gpu = gpu_name
+            training_budget_flops = effective_flops
+
+    a = 406.4
+    alpha = 0.34
+    b = 410.7
+    beta = 0.29
+    k = training_budget_flops / 6.0
+
+    N = ((alpha * a * (k ** beta)) / (beta * b)) ** (1.0 / (alpha + beta))
+    D = k / N
+
+    return N, D, training_budget_flops, best_gpu
 
 
 if __name__ == "__main__":
