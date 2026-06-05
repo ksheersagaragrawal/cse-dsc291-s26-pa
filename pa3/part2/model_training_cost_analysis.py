@@ -83,13 +83,6 @@ def model_training_cost_analysis_llama(model_config_path):
     attention_flops = 2 * batch_size * num_attention_heads * max_seq_len * max_seq_len * head_dim
     attention_flops *= 2  # QK^T and attention·V
     mlp_flops = 2 * batch_size * max_seq_len * (
-def _load_config(model_config_path):
-    with open(model_config_path, "r") as f:
-        return json.load(f)
-
-def _bf16_bytes(num_elements):
-    return 2 * num_elements
-
         hidden_size * intermediate_size
         + hidden_size * intermediate_size
         + intermediate_size * hidden_size
