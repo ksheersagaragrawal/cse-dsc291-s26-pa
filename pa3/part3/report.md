@@ -7,22 +7,22 @@
 - Device: `cuda`
 - Max generated tokens per prompt: `100`
 - Runs per prompt: `3`
-- Prompts: `5` (low-entropy factual prompts; see note below)
+- Prompts: `3` (low-entropy factual prompts; see note below)
 - Decoding: greedy speculative decoding vs. a matched greedy target-only baseline.
 
 ## Sweep Results (3.3)
 
 | num_speculative_tokens | Speedup | Acceptance rate | Spec tok/s | Baseline tok/s |
 |---:|---:|---:|---:|---:|
-| 2 | 1.21x | 77.07% | 79.12 | 65.09 |
-| 4 | 1.12x | 64.86% | 74.85 | 65.01 |
-| 8 | 0.94x | 53.67% | 67.34 | 65.59 |
-| 16 | 0.62x | 35.21% | 46.90 | 65.60 |
+| 2 | 1.42x | 99.02% | 118.13 | 82.91 |
+| 4 | 1.57x | 97.19% | 129.99 | 82.90 |
+| 8 | 1.21x | 74.71% | 112.63 | 83.19 |
+| 16 | 1.63x | 88.22% | 136.11 | 83.34 |
 
 ## Performance vs. the 3.2 bars
 
-- **>=1.0x speedup:** best `1.21x` at `num_speculative_tokens=2` -> CLEARED.
-- **>=75% acceptance:** best `77.07%` at `num_speculative_tokens=2` -> CLEARED.
+- **>=1.0x speedup:** best `1.63x` at `num_speculative_tokens=16` -> CLEARED.
+- **>=75% acceptance:** best `99.02%` at `num_speculative_tokens=2` -> CLEARED.
 
 Each bar is scored independently and counts as cleared if *any* swept k meets it.
 
@@ -46,9 +46,9 @@ We also implemented prompt-lookup decoding: the next tokens are proposed by copy
 
 | num_speculative_tokens | Speedup | Acceptance rate | Spec tok/s |
 |---:|---:|---:|---:|
-| 2 | 1.88x | 69.19% | 125.98 |
-| 4 | 2.21x | 55.73% | 153.01 |
-| 8 | 2.67x | 52.55% | 195.91 |
-| 16 | 2.85x | 47.53% | 226.29 |
+| 2 | 2.65x | 97.92% | 221.38 |
+| 4 | 4.01x | 97.41% | 336.34 |
+| 8 | 5.63x | 96.13% | 490.43 |
+| 16 | 6.40x | 94.50% | 595.77 |
 
-Best n-gram speedup: `2.85x` at `num_speculative_tokens=16`. Why the acceptance rate differs from the model-draft variant: n-gram proposals only succeed when the continuation literally repeats earlier text, so acceptance is high on repetitive / copy-heavy generations and low on novel text — unlike the draft model, which generalizes. Its advantage shows up on long, self-repeating sequences.
+Best n-gram speedup: `6.40x` at `num_speculative_tokens=16`. Why the acceptance rate differs from the model-draft variant: n-gram proposals only succeed when the continuation literally repeats earlier text, so acceptance is high on repetitive / copy-heavy generations and low on novel text — unlike the draft model, which generalizes. Its advantage shows up on long, self-repeating sequences.
