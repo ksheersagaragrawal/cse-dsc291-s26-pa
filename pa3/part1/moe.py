@@ -3,7 +3,10 @@
 You will implement `ShardedLinear`, `MoE_TP`, and `MoE_EP` in this file. The
 reference `SimpleMoE` and a pre-built `Router` are provided.
 """
+import pickle
+
 import numpy as np
+from mpi4py import MPI
 
 from mpi_wrapper import mpi
 from rng import get_rng, rng_context
@@ -243,6 +246,48 @@ class MoE_EP:
         with rng_context("expert_with_rank"):
             self.expert = Expert(input_dim, hidden_dim, output_dim)
 
+        # Bonus path (+5): route the EP all-to-all through the point-to-point
+        # `myAlltoall` copied from PA2 instead of the pickle-based collective.
+        # Set False to fall back to `mpi.alltoall`.
+        self.use_my_alltoall = True
+
+    def _alltoall(self, send_buckets):
+        """All-to-all of one Python payload per destination rank.
+
+        Bonus path: when `use_my_alltoall` is set, the exchange is routed
+        through the PA2 point-to-point `myAlltoall`, which requires equal-sized
+        segments. We pickle each destination's payload to bytes, prefix a
+        4-byte length header, and zero-pad every per-rank segment to a common
+        length agreed via an all-reduce(MAX). The receiver reads the header and
+        unpickles only the valid bytes, so the result is identical to
+        `mpi.alltoall(send_buckets)`.
+        """
+        if not getattr(self, "use_my_alltoall", False):
+            return mpi.alltoall(send_buckets)
+
+        ws = self.world_size
+        payloads = [pickle.dumps(send_buckets[p]) for p in range(ws)]
+        local_max = max(len(p) for p in payloads)
+        cap = int(mpi.allreduce(local_max, op=MPI.MAX))  # common payload capacity
+        seg = 4 + cap  # 4-byte length header + zero-padded payload
+
+        send = np.zeros(ws * seg, dtype=np.uint8)
+        for p in range(ws):
+            base = p * seg
+            n = len(payloads[p])
+            send[base : base + 4] = np.frombuffer(np.uint32(n).tobytes(), dtype=np.uint8)
+            send[base + 4 : base + 4 + n] = np.frombuffer(payloads[p], dtype=np.uint8)
+
+        recv = np.empty_like(send)
+        mpi.myAlltoall(send, recv)
+
+        received = []
+        for p in range(ws):
+            base = p * seg
+            n = int(np.frombuffer(recv[base : base + 4].tobytes(), dtype=np.uint32)[0])
+            received.append(pickle.loads(recv[base + 4 : base + 4 + n].tobytes()))
+        return received
+
     def forward(self, x):
         """
         Args:
@@ -268,7 +313,7 @@ class MoE_EP:
                 buckets[expert_idx].append((i, item, gate, k))
 
         # Use all-to-all to send buckets to their destination ranks and receive buckets from others
-        received_buckets = mpi.alltoall(buckets)
+        received_buckets = self._alltoall(buckets)
 
         # Run this rank's expert on all received tokens and store results
         # received_buckets[src_rank] = list of (token_idx, item, gate, k)
@@ -284,7 +329,7 @@ class MoE_EP:
             result_buckets[src_rank].append((token_idx, k, output))
 
         # Use all-to-all again to send results back
-        received_results = mpi.alltoall(result_buckets)
+        received_results = self._alltoall(result_buckets)
 
         # Reconstruct outputs by combining results from all experts
         for expert_rank, results in enumerate(received_results):

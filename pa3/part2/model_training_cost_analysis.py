@@ -132,14 +132,28 @@ def model_training_cost_analysis_deepseek(model_config_path):
     max_seq_len = config["max_position_embeddings"]
 
     token_embedding_params = vocab_size * hidden_size
+    # Untied output head (tie_word_embeddings is False for DeepSeek-V3).
+    lm_head_params = 0 if config.get("tie_word_embeddings", False) else vocab_size * hidden_size
 
-    q_out_dim = num_attention_heads * (qk_nope_head_dim + qk_rope_head_dim)
-    kv_out_dim = num_key_value_heads * (qk_nope_head_dim + qk_rope_head_dim + v_head_dim)
+    # MLA attention, matching the DeepSeek-V3 attention module:
+    #   q_a_proj (down) + q_b_proj (up to num_heads * qk_head_dim),
+    #   kv_a_proj_with_mqa (down to kv_lora_rank + the decoupled RoPE key),
+    #   kv_b_proj (up to num_heads * (nope + v_head_dim) — no RoPE in the up-proj),
+    #   o_proj over num_heads * v_head_dim, plus the two LoRA RMSNorms.
+    q_head_dim = qk_nope_head_dim + qk_rope_head_dim
+    q_a_proj = hidden_size * q_lora_rank
+    q_b_proj = q_lora_rank * (num_attention_heads * q_head_dim)
+    kv_a_proj = hidden_size * (kv_lora_rank + qk_rope_head_dim)
+    kv_b_proj = kv_lora_rank * (num_attention_heads * (qk_nope_head_dim + v_head_dim))
+    o_proj = (num_attention_heads * v_head_dim) * hidden_size
+    mla_norm_params = q_lora_rank + kv_lora_rank
     attention_params_per_layer = (
-        hidden_size * q_lora_rank + q_lora_rank * q_out_dim
-        + hidden_size * kv_lora_rank + kv_lora_rank * kv_out_dim
-        + hidden_size * hidden_size
+        q_a_proj + q_b_proj + kv_a_proj + kv_b_proj + o_proj + mla_norm_params
     )
+
+    # Activation widths used by the FLOPs / memory estimates below.
+    q_out_dim = num_attention_heads * q_head_dim
+    kv_out_dim = num_attention_heads * (qk_nope_head_dim + v_head_dim)
 
     dense_mlp_params = (
         hidden_size * intermediate_size
@@ -160,6 +174,7 @@ def model_training_cost_analysis_deepseek(model_config_path):
 
     total_params = (
         token_embedding_params
+        + lm_head_params
         + dense_layers * (attention_params_per_layer + dense_mlp_params + norm_params_per_layer)
         + moe_layers * (attention_params_per_layer + moe_mlp_params + norm_params_per_layer)
         + hidden_size
@@ -167,14 +182,10 @@ def model_training_cost_analysis_deepseek(model_config_path):
 
     batch_size = 1
     proj_flops = 2 * batch_size * max_seq_len * (
-        hidden_size * q_lora_rank
-        + q_lora_rank * q_out_dim
-        + hidden_size * kv_lora_rank
-        + kv_lora_rank * kv_out_dim
-        + hidden_size * hidden_size
+        q_a_proj + q_b_proj + kv_a_proj + kv_b_proj + o_proj
     )
-    attention_flops = 2 * batch_size * num_attention_heads * max_seq_len * max_seq_len * (hidden_size // num_attention_heads)
-    attention_flops *= 2
+    # QK^T over q_head_dim and attention·V over v_head_dim.
+    attention_flops = 2 * batch_size * num_attention_heads * max_seq_len * max_seq_len * (q_head_dim + v_head_dim)
     mlp_flops = 2 * batch_size * max_seq_len * (
         hidden_size * intermediate_size
         + hidden_size * intermediate_size
